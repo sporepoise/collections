@@ -15,11 +15,14 @@ public interface Employee {
     /**
      * @return the name of the employee
      */
+	
+	
     String getName();
 
     /**
      * @return true if the employee has a manager, false otherwise
      */
+    
     boolean hasManager();
 
     /**

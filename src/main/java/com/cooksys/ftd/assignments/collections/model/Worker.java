@@ -1,6 +1,8 @@
 package com.cooksys.ftd.assignments.collections.model;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.cooksys.ftd.assignments.collections.util.MissingImplementationException;
 
@@ -15,13 +17,16 @@ public class Worker implements Employee {
 
     // TODO: Does this class need private fields? If so, add them here
 
+	private String name;
+	private Manager manager;
     /**
      * TODO: Implement this constructor.
      *
      * @param name the name of the worker to be created
      */
     public Worker(String name) {
-        throw new MissingImplementationException();
+        super();
+        this.name = name;
     }
 
     /**
@@ -31,7 +36,8 @@ public class Worker implements Employee {
      * @param manager the direct manager of the worker to be created
      */
     public Worker(String name, Manager manager) {
-        throw new MissingImplementationException();
+    	this.name = name;
+    	this.manager = manager;
     }
 
     /**
@@ -41,7 +47,7 @@ public class Worker implements Employee {
      */
     @Override
     public String getName() {
-        throw new MissingImplementationException();
+        return this.name;
     }
 
     /**
@@ -51,7 +57,10 @@ public class Worker implements Employee {
      */
     @Override
     public boolean hasManager() {
-        throw new MissingImplementationException();
+    	if (manager != null) {
+    		return true;
+    	}
+        return false;
     }
 
     /**
@@ -61,10 +70,32 @@ public class Worker implements Employee {
      */
     @Override
     public Manager getManager() {
-        throw new MissingImplementationException();
-    }
+    	 if (hasManager()) {
+         	return this.manager;
+         } return null; //come back to this
+    } 
 
-    /**
+    @Override
+	public int hashCode() {
+		return Objects.hash(manager, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Worker other = (Worker) obj;
+		return Objects.equals(manager, other.manager) && Objects.equals(name, other.name);
+	}
+
+	/**
      * TODO: Implement this method.
      *  <br><br>
      *  Retrieves the worker's chain of command as a {@code List<Manager>}, starting with their direct {@code Manager},
@@ -79,7 +110,17 @@ public class Worker implements Employee {
      */
     @Override
     public List<Manager> getChainOfCommand() {
-        throw new MissingImplementationException();
+    	
+    	Manager current = this.getManager();
+        List<Manager>  managerList = new ArrayList<>();
+        if(hasManager() == false) {
+        	return managerList;
+        }
+        while(current != null) {
+        	managerList.add(current);
+        	current = current.getManager();
+        }
+        return managerList;
     }
 
     // TODO: Does this class need custom .equals() and .hashcode() methods? If so, implement them here.

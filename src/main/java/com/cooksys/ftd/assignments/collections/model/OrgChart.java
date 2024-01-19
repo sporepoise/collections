@@ -4,42 +4,66 @@ import java.util.Map;
 import java.util.Set;
 
 import com.cooksys.ftd.assignments.collections.util.MissingImplementationException;
-
+import java.util.*;
 public class OrgChart {
 
     // TODO: this class needs to store employee data in private fields in order for the other methods to work as intended.
     //  Add those fields here. Consider how you want to store the data, and which collection types to use to make
     //  implementing the other methods as easy as possible. There are several different ways to approach this problem, so
     //  experiment and don't be afraid to change how you're storing your data if it's not working out!
+	private Set<Employee> orgChart = new HashSet<>();
 
     /**
-     * TODO: Implement this method
-     *  <br><br>
-     *  Adds a given {@code Employee} to the {@code OrgChart}. If the {@code Employee} is successfully added, this
-     *  method should return true. If the {@code Employee} was not successfully added, it should return false. In order
-     *  to determine if and how an {@code Employee} can be added, refer to the following algorithm:
-     *  <br><br>
-     *  If the given {@code Employee} is already present in the {@code OrgChart}, do not add it and
-     *  return false. Otherwise:
-     *  <br><br>
-     *  If the given {@code Employee} has a {@code Manager} and that {@code Manager} is not part of the
-     *  {@code OrgChart} yet, add that {@code Manager} first and then add the given {@code Employee}, and return true.
-     *  <br><br>
-     *  If the given {@code Employee} has a {@code Manager} and the {@code Manager} is part of the {@code OrgChart},
-     *  add the given {@code Employee} and return true.
-     *  <br><br>
-     *  If the given {@code Employee} has no {@code Manager}, but is a {@code Manager} itself, add it to the
-     *  {@code OrgChart} and return true.
-     *  <br><br>
-     *  If the given {@code Employee} has no {@code Manager} and is not a {@code Manager} itself, do not add it
-     *  and return false.
-     *
-     * @param employee the {@code Employee} to add to the {@code OrgChart}
-     * @return true if the {@code Employee} was added successfully, false otherwise
-     */
-    public boolean addEmployee(Employee employee) {
-        throw new MissingImplementationException();
-    }
+	 * TODO: Implement this method <br>
+	 * <br>
+	 * Adds a given {@code Employee} to the {@code OrgChart}. If the
+	 * {@code Employee} is successfully added, this method should return true. If
+	 * the {@code Employee} was not successfully added, it should return false. In
+	 * order to determine if and how an {@code Employee} can be added, refer to the
+	 * following algorithm: <br>
+	 * <br>
+	 * If the given {@code Employee} is already present in the {@code OrgChart}, do
+	 * not add it and return false. Otherwise: <br>
+	 * <br>
+	 * If the given {@code Employee} has a {@code Manager} and that {@code Manager}
+	 * is not part of the {@code OrgChart} yet, add that {@code Manager} first and
+	 * then add the given {@code Employee}, and return true. <br>
+	 * <br>
+	 * If the given {@code Employee} has a {@code Manager} and the {@code Manager}
+	 * is part of the {@code OrgChart}, add the given {@code Employee} and return
+	 * true. <br>
+	 * <br>
+	 * If the given {@code Employee} has no {@code Manager}, but is a
+	 * {@code Manager} itself, add it to the {@code OrgChart} and return true. <br>
+	 * <br>
+	 * If the given {@code Employee} has no {@code Manager} and is not a
+	 * {@code Manager} itself, do not add it and return false.
+	 *
+	 * @param employee the {@code Employee} to add to the {@code OrgChart}
+	 * @return true if the {@code Employee} was added successfully, false otherwise
+	 */
+	public boolean addEmployee(Employee employee) {
+
+		if (orgChart.contains(employee) || employee == null) { //employee is in set
+			return false;
+		}
+		Manager manager = employee.getManager();
+
+		while(manager != null ) {
+			if(orgChart.contains(manager)) { //manager is in the set already
+				break; // exit loop
+			}
+			orgChart.add(manager);
+			manager = manager.getManager(); // get next manager
+		}
+		if(employee instanceof Manager && !employee.hasManager()) { //
+			return orgChart.add(employee);
+		}
+		if(!(employee instanceof Manager) && !employee.hasManager()) { //employee is not a manager and has no manager
+			return false;
+		}
+		return orgChart.add(employee); // add employee
+	}
 
     /**
      * TODO: Implement this method
@@ -50,7 +74,7 @@ public class OrgChart {
      * @return true if the {@code Employee} has been added to the {@code OrgChart}, false otherwise
      */
     public boolean hasEmployee(Employee employee) {
-        throw new MissingImplementationException();
+        return orgChart.contains(employee);
     }
 
     /**
@@ -64,7 +88,8 @@ public class OrgChart {
      *         been added to the {@code OrgChart}
      */
     public Set<Employee> getAllEmployees() {
-        throw new MissingImplementationException();
+    	
+        return new HashSet<>(orgChart);
     }
 
     /**
@@ -78,29 +103,57 @@ public class OrgChart {
      *         have been added to the {@code OrgChart}
      */
     public Set<Manager> getAllManagers() {
-        throw new MissingImplementationException();
+        Set<Manager> managerSet = new HashSet<>();
+        
+        for (Employee e : orgChart) {
+        	if (e instanceof Manager) {
+        		Manager manager = (Manager) e;
+        		managerSet.add(manager);
+        	}
+        }
+        return managerSet;
     }
 
     /**
-     * TODO: Implement this method
-     *  <br><br>
-     *  Retrieves all of the direct subordinates of a given {@code Manager} as a flat {@code Set}.
-     *  <br><br>
-     *  These are the {@code Employee}s (both {@code Worker}s and {@code Manager}s) that return the given
-     *  {@code Manager} when their {@code .getManager()} method is called.
-     *  <br><br>
-     *  If the given {@code Manager} does not have any subordinates in the
-     *  {@code OrgChart}, or if the given {@code Manager} is itself not in the {@code OrgChart}, the returned
-     *  {@code Set} should be empty, but not {@code null}.
-     *
-     * @param manager the {@code Manager} whose direct subordinates need to be returned
-     * @return all {@code Employee}s in the {@code OrgChart} that have the given {@code Manager} as a direct
-     *         parent, or an empty set if the {@code Manager} is not present in the {@code OrgChart}
-     *         or if there are no subordinates for the given {@code Manager}
-     */
-    public Set<Employee> getDirectSubordinates(Manager manager) {
-        throw new MissingImplementationException();
-    }
+	 * TODO: Implement this method <br>
+	 * <br>
+	 * Retrieves all of the direct subordinates of a given {@code Manager} as a flat
+	 * {@code Set}. <br>
+	 * <br>
+	 * These are the {@code Employee}s (both {@code Worker}s and {@code Manager}s)
+	 * that return the given {@code Manager} when their {@code .getManager()} method
+	 * is called. <br>
+	 * <br>
+	 * If the given {@code Manager} does not have any subordinates in the
+	 * {@code OrgChart}, or if the given {@code Manager} is itself not in the
+	 * {@code OrgChart}, the returned {@code Set} should be empty, but not
+	 * {@code null}.
+	 *
+	 * @param manager the {@code Manager} whose direct subordinates need to be
+	 *                returned
+	 * @return all {@code Employee}s in the {@code OrgChart} that have the given
+	 *         {@code Manager} as a direct parent, or an empty set if the
+	 *         {@code Manager} is not present in the {@code OrgChart} or if there
+	 *         are no subordinates for the given {@code Manager}
+	 */
+	public Set<Employee> getDirectSubordinates(Manager manager) {
+		Set<Employee> subordinates = new HashSet<>();
+
+		// make sure if manager has no subs or manager is not in set
+		if (!orgChart.contains(manager)) {
+			return subordinates;
+		}
+		for (Employee e : orgChart) {
+
+			if (e.getManager() != null) {
+				if (e.getManager().equals(manager)) {
+					subordinates.add(e);
+				}
+
+			}
+		}
+		return subordinates;
+	}
 
     /**
      * TODO: Implement this method
@@ -119,7 +172,15 @@ public class OrgChart {
      *         associated {@code Manager}, or an empty map if the {@code OrgChart} is empty.
      */
     public Map<Manager, Set<Employee>> getFullHierarchy() {
-        throw new MissingImplementationException();
+    	Map<Manager, Set<Employee>> map = new HashMap();
+    	Set<Manager> managers = getAllManagers();
+    	
+    	//look in the set and populate map
+    	for(Manager m : managers) {
+    		map.put(m, getDirectSubordinates(m));
+    	}
+        return map;
     }
 
+    
 }
